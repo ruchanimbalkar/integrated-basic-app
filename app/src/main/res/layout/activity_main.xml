@@ -5,19 +5,17 @@ android:layout_height="match_parent"
 android:weightSum="1"
 android:rowCount="24"
 android:columnCount="3">
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/rootRL"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scaleType="fitXY"
-        android:background="@drawable/icon"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="false"
+
+        android:background="@drawable/mapicon"
+
         android:touchscreenBlocksFocus="false">
-        android:background="@android:color/transparent"
+
 
         <Button
             android:layout_width="wrap_content"
@@ -46,7 +44,7 @@ android:columnCount="3">
             android:layout_alignParentEnd="true" />
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Username"
@@ -54,10 +52,10 @@ android:columnCount="3">
             android:layout_column="2"
             android:layout_row="22"
             android:layout_marginLeft="0dp"
-            android:textSize="22dp"
+            android:textSize="24dp"
             android:textColor="#060606"
             android:textColorHighlight="#fbf8f8"
-            android:background="#F0F8FF"
+            android:background="#FFA500"
             android:layout_alignTop="@+id/TFuser"
             android:layout_alignStart="@+id/textView4"
             android:layout_alignEnd="@+id/textView4" />
@@ -73,16 +71,17 @@ android:columnCount="3">
             android:layout_marginBottom="33dp" />
 
         <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Password"
         android:id="@+id/textView4"
-        android:textSize="22dp"
-            android:background="#F0F8FF"
+        android:textSize="24dp"
+            android:background="#FFA500"
         android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_alignTop="@+id/TFpassword"
             android:layout_alignStart="@+id/Blogin"
-            android:layout_alignEnd="@+id/Blogin" />
+            android:layout_alignEnd="@+id/Blogin"
+            android:layout_alignParentEnd="false" />
     </RelativeLayout>
 
     <!--<ImageView-->
