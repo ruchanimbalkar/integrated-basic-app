@@ -9,10 +9,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,12 +23,25 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -234,6 +247,157 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             int lat = (int) (location.getLatitude());
             int lng = (int)  (location.getLongitude());
             String str = getCurrentTimeStamp();
+
+        String url="http://url.com";
+        URL object= null;
+
+        try {
+            object = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        HttpURLConnection con = null;
+        try {
+            con = (HttpURLConnection) object.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+        try {
+            con.setRequestMethod("POST");
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject latitude = new JSONObject();
+        JSONObject longitude =new JSONObject();
+        JSONObject time =new JSONObject();
+
+        try {
+            latitude.put("Lat",lat);
+            longitude.put("long",lng);
+            time.put("time",str);
+
+            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+            wr.flush();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //display what returns the POST request
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            int HttpResult = con.getResponseCode();
+            if (HttpResult == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+
+                br.close();
+
+                System.out.println("" + sb.toString());
+
+            } else {
+                System.out.println(con.getResponseMessage());
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+/*
+            String url="http://url.com";
+            URL object=new URL(url);
+
+            HttpURLConnection con = (HttpURLConnection) object.openConnection();
+            con.setDoOutput(true);
+            con.setDoInput(true);
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestMethod("POST");
+
+            JSONObject toSend   = new JSONObject();
+        try {
+        toSend.put("Lat",lat);
+        toSend.put("Long",lng);
+        toSend.put("timeStamp", str);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
+*/
+
+
+        StringBuilder testB = new StringBuilder();
+
+        String http = "http://android.schoolportal.gr/Service.svc/SaveValues";
+
+        HttpURLConnection urlConnection=null;
+        try {
+            URL url2 = new URL(http);
+            urlConnection = (HttpURLConnection) url2.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setUseCaches(false);
+            urlConnection.setConnectTimeout(10000);
+            urlConnection.setReadTimeout(10000);
+            urlConnection.setRequestProperty("Content-Type","application/json");
+
+            urlConnection.setRequestProperty("Host", "android.schoolportal.gr");
+            urlConnection.connect();
+
+            //Create JSONObject here
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("ID", "25");
+            jsonParam.put("description", "Real");
+            jsonParam.put("enable", "true");
+            OutputStreamWriter out = new   OutputStreamWriter(urlConnection.getOutputStream());
+            out.write(jsonParam.toString());
+            out.close();
+
+            int HttpResult =urlConnection.getResponseCode();
+            if(HttpResult ==HttpURLConnection.HTTP_OK){
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        urlConnection.getInputStream(),"utf-8"));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    testB.append(line + "\n");
+                }
+                br.close();
+
+                System.out.println(""+testB.toString());
+
+            }else{
+                System.out.println(urlConnection.getResponseMessage());
+            }
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }finally{
+            if(urlConnection!=null)
+                urlConnection.disconnect();
+        }
+
     }
 
 
@@ -243,6 +407,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return currentTimeStamp;
     }
+
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
